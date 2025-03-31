@@ -14,10 +14,10 @@ resource "google_iam_workload_identity_pool_provider" "tbd-workload-identity-pro
   display_name                       = "GitHub provider"
   description                        = "GitHub identity pool provider for CI/CD purposes"
   attribute_mapping = {
-    "google.subject" : "assertion.sub"
-    "attribute.repository" : "assertion.repository"
-    "attribute.org"  = "assertion.repository_owner"
-    "attribute.refs" = "assertion.ref"
+    "google.subject"       = "assertion.sub"
+    "attribute.repository" = "assertion.repository"
+    "attribute.org"        = "assertion.repository_owner"
+    "attribute.refs"       = "assertion.ref"
   }
   attribute_condition = "attribute.repository == \"${var.github_org}\""
   oidc {

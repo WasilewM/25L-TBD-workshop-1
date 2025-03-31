@@ -37,7 +37,7 @@ gcloud auth application-default login
 ```bash
 export TF_VAR_tbd_semester=2025L
 # format: 20xx for teachers, student ID number for students 
-export TF_VAR_user_id=xxx
+export TF_VAR_user_id=310972
 # use your own billing account id
 export TF_VAR_billing_account=xxx
 # for budget creation
@@ -50,8 +50,8 @@ export GOOGLE_BILLING_PROJECT=$(echo "tbd-${TF_VAR_tbd_semester}-${TF_VAR_user_i
 cd bootstrap
 terraform init
 gcloud config set account "aleksandra.sypula@gmail.com"
-gcloud config set project "tbd-2025l-309421"
-terraform import google_project.tbd_project projects/tbd-2025l-309421
+gcloud config set project "tbd-2025l-310972"
+terraform import google_project.tbd_project projects/tbd-2025l-310972
 terraform apply
 cd ..
 ```
