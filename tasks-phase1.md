@@ -22,16 +22,45 @@ IMPORTANT ❗ ❗ ❗ Please remember to destroy all the resources after each wo
     
     2. Create PR from this branch to **YOUR** master and merge it to make new release. 
     
-    ***place the screenshot from GA after succesfull application of release***
+    ![release](screenshots/release.png)
 
 
 6. Analyze terraform code. Play with terraform plan, terraform graph to investigate different modules.
 
-    ***describe one selected module and put the output of terraform graph for this module here***
+    ![dataproc_graph](modules/dataproc/dataproc_graph.png)
+
+`google_dataproc_cluster.tbd-dataproc-cluster`: This resource defines a Dataproc cluster in Google Cloud. Dataproc is a managed service that allows you to run computations using Apache Hadoop and Apache Spark in the cloud.
+
+- **`google_project_service.dataproc`**: Enables the Dataproc service in the Google Cloud project, which is necessary for creating the cluster.
+
+- **`google_dataproc_cluster.tbd-dataproc-cluster`**: Defines the Dataproc cluster:
+   - **`depends_on`**: Ensures that the Dataproc service is enabled before creating the cluster.
+   - **`name`**: The name of the cluster, in this case, "tbd-cluster".
+   - **`project`**: Specifies the name of the project in which the cluster is created.
+   - **`region`**: The region where the cluster is deployed.
+
+- **`cluster_config`**: Section that defines the configuration of the cluster:
+   - **`software_config`**: Allows the specification of the software version to be used on the cluster.
+   - **`gce_cluster_config`**: Configuration related to GCE (Google Compute Engine) instances, including information about the subnet and metadata.
+   - **`initialization_action`**: Specifies a script to be run during the initialization of the cluster, in this case, a script that installs Python packages.
    
+- **`master_config`**: Defines the configuration for the master node:
+   - **`num_instances`**: The number of instances for the master node.
+   - **`machine_type`**: The machine type for the master node.
+   - **`disk_config`**: Specifies the type and size of the boot disk.
+   
+- **`worker_config`**: Defines the configuration for worker nodes:
+   - **`num_instances`**: The number of instances for the worker nodes.
+   - **`machine_type`**: The machine type for the worker nodes.
+   - **`disk_config`**: Specifies the type and size of the boot disk for the worker nodes.
+
 7. Reach YARN UI
    
-   ***place the command you used for setting up the tunnel, the port and the screenshot of YARN UI here***
+   Used command:  
+   ```
+   gcloud compute ssh tbd-cluster-m --project=tbd-2025l-310972 --zone=europe-west1-d --tunnel-through-iap -- -L 8088:localhost:8088
+   ```
+   ![hadoop](screenshots/hadoop2.png)
    
 8. Draw an architecture diagram (e.g. in draw.io) that includes:
     1. VPC topology with service assignment to subnets
@@ -45,9 +74,37 @@ IMPORTANT ❗ ❗ ❗ Please remember to destroy all the resources after each wo
 For all the resources of type: `google_artifact_registry`, `google_storage_bucket`, `google_service_networking_connection`
 create a sample usage profiles and add it to the Infracost task in CI/CD pipeline. Usage file [example](https://github.com/infracost/infracost/blob/master/infracost-usage-example.yml) 
 
-   ***place the expected consumption you entered here***
 
-   ***place the screenshot from infracost output here***
+```
+version: 0.1
+resource_usage:
+  google_artifact_registry_repository:
+    storage_gb: 64
+    monthly_egress_data_transfer_gb:
+      europe_west1: 16
+  google_storage_bucket:
+    storage_gb: 128
+    monthly_class_a_operations: 4096
+    monthly_class_b_operations: 8192
+    monthly_data_retrieval_gb: 32
+    monthly_egress_data_transfer_gb:
+      same_continent: 32
+      worldwide: 0
+      asia: 0
+      china: 0
+      australia: 0
+  google_service_networking_connection:
+    monthly_egress_data_transfer_gb:
+      same_region: 16
+      europe: 16
+      us_or_canada: 0
+      asia: 0
+      south_america: 0
+      oceania: 0
+      worldwide: 16
+```
+
+   ![infracost](screenshots/infracost.png)
 
 10. Create a BigQuery dataset and an external table using SQL
     
@@ -57,10 +114,35 @@ create a sample usage profiles and add it to the Infracost task in CI/CD pipelin
 
 11. Find and correct the error in spark-job.py
 
-    ***describe the cause and how to find the error***
+    There was a need to update the `student_id` in `modules/data-pipeline/resources/spark-job.py`.:  
+    changed from
+    ```
+    DATA_BUCKET = "gs://tbd-2025l-9900-data/data/shakespeare/"
+    ```
+    to:
+    ```
+    DATA_BUCKET = "gs://tbd-2025l-310972-data/data/shakespeare/"
+    ```
 
 12. Add support for preemptible/spot instances in a Dataproc cluster
 
-    ***place the link to the modified file and inserted terraform code***
-    
+    Modifications were added to `modules/dataproc/variables.tf` variables file located [here](modules/dataproc/variables.tf): 
+    ```
+    variable "worker_count" {
+        type        = number
+        default     = 2
+        description = "Number of worker nodes"
+    }
+    ```
+    and to `modules/dataproc/main.tf` file located [here](modules/dataproc/variables.tf):
+    ```
+    worker_config {
+        num_instances = var.worker_count
+        machine_type  = var.machine_type
+        disk_config {
+            boot_disk_type    = "pd-standard"
+            boot_disk_size_gb = 100
+        }
+    }
+    ```
     
