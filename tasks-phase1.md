@@ -5,9 +5,9 @@ IMPORTANT ❗ ❗ ❗ Please remember to destroy all the resources after each wo
 1. Authors:
 
    Group 5
-   Sypuła Aleksandra
-   Szarejko Łukasz
-   Wasilewski Mateusz
+- Sypuła Aleksandra  
+- Szarejko Łukasz  
+- Wasilewski Mateusz  
 
    https://github.com/WasilewM/25L-TBD-workshop-1.git
    
