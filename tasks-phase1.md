@@ -105,7 +105,7 @@ resource_usage:
 ```
 
    ![infracost](screenshots/infracost.png)
-   
+
 10. Create a BigQuery dataset and an external table using SQL
     
     ***place the code and output here***
@@ -114,7 +114,15 @@ resource_usage:
 
 11. Find and correct the error in spark-job.py
 
-    ***describe the cause and how to find the error***
+    There was a need to update the `student_id` in `modules/data-pipeline/resources/spark-job.py`.:  
+    changed from
+    ```
+    DATA_BUCKET = "gs://tbd-2025l-9900-data/data/shakespeare/"
+    ```
+    to:
+    ```
+    DATA_BUCKET = "gs://tbd-2025l-310972-data/data/shakespeare/"
+    ```
 
 12. Add support for preemptible/spot instances in a Dataproc cluster
 
