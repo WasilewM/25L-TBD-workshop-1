@@ -126,6 +126,23 @@ resource_usage:
 
 12. Add support for preemptible/spot instances in a Dataproc cluster
 
-    ***place the link to the modified file and inserted terraform code***
-    
+    Modifications were added to `modules/dataproc/variables.tf` variables file located [here](modules/dataproc/variables.tf): 
+    ```
+    variable "worker_count" {
+        type        = number
+        default     = 2
+        description = "Number of worker nodes"
+    }
+    ```
+    and to `modules/dataproc/main.tf` file located [here](modules/dataproc/variables.tf):
+    ```
+    worker_config {
+        num_instances = var.worker_count
+        machine_type  = var.machine_type
+        disk_config {
+            boot_disk_type    = "pd-standard"
+            boot_disk_size_gb = 100
+        }
+    }
+    ```
     
